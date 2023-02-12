@@ -1,0 +1,23 @@
+# IDE files
+.vscode/
+.idea/
+
+# Binary
+.deploy/bin
+notification-service
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE or pprof tools
+*.out
+
+# vendor folder
+vendor/
+
+#
+/notification-service.toml
+
+# startup script
+run.sh
+test.sh

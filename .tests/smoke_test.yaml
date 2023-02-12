@@ -1,0 +1,47 @@
+contracts:
+  - name: missing_headers_and_body
+    path: "/notify"
+    method: POST
+    http_code_is: 403
+
+  - name: missing_body
+    path: "/notify"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+      X-NS-TENANTID: "examplestring"
+      X-NS-SERVICE: "delivery"
+    http_code_is: 400
+
+  - name: missing_one_param_in_body
+    path: "/notify"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+      X-NS-TENANTID: "examplestring"
+      X-NS-SERVICE: "delivery"
+    body: '{"type":"httpget"}'
+    http_code_is: 400
+
+  - name: missing_one_header
+    path: "/notify"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+      X-NS-TENANTID: "examplestring"
+    body: '{"type":"httpget"}'
+    http_code_is: 403
+
+  - name: accepted
+    path: "/notify"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+      X-NS-TENANTID: "examplestring"
+      X-NS-SERVICE: "delivery"
+    body: '{"type":"httpget","http_request":"http://0.0.0.0:80/status/200"}'
+    http_code_is: 202
+
+
+
+

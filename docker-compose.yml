@@ -1,0 +1,54 @@
+# example settings based on https://gist.github.com/mhowlett/14f70af1a5b44fba80c9d1857a44bb98#file-docker-compose-yml
+# we can use kafka commands inside kafka docker container:
+# - consumer: /usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --topic tenant-delivery --from-beginning 
+# - producer: /usr/bin/kafka-console-producer 
+version: '3.1'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    ports:
+      - '2181:2181'
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: zookeeper:2888:3888
+  kafka:
+    image: confluentinc/cp-kafka
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+  httpbin:
+    image: kennethreitz/httpbin
+    ports:
+      - '80:80'
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./.monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - '9090:9090'
+    network_mode: host
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - ./.monitoring/grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=foobar
+      - GF_USERS_ALLOW_SIGN_UP=false
+    network_mode: host

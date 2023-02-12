@@ -1,0 +1,14 @@
+[APP]
+Port=11000
+EnablePprof=false
+
+[KAFKA]
+Brokers = ["kafka-notification-service:9092"]
+
+[[Services]]
+    Name = "delivery"
+    TenantId   = "tenant"
+    Retry      = 3
+    RetryDelay = "500ms"
+    Timeout    = "250ms"
+    GroupID    = "notification"
